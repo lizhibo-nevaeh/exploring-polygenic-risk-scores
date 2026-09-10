@@ -1,0 +1,36 @@
+# Local configuration
+config.sh
+.env
+*.env
+
+# Raw and intermediate data
+data/
+logs/
+tmp/
+*.vcf
+*.vcf.gz
+*.tbi
+*.csi
+*.bed
+*.bim
+*.fam
+*.pgen
+*.pvar
+*.pvar.zst
+*.psam
+*.rds
+*.RData
+*.bk
+*.sbk
+*.zip
+
+# Runtime outputs not explicitly curated
+*.log
+*.out
+*.err
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

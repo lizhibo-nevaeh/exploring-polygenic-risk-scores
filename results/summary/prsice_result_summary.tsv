@@ -1,0 +1,13 @@
+Metric	Value
+N	2000
+Cases	1000
+Controls	1000
+Best_P_threshold	0.4463
+Best_PRS_SNPs	36759
+PRS_R2	0.0520082
+Mean_PRS_z_cases	0.1974214
+Mean_PRS_z_controls	-0.1974214
+OR_per_SD	1.508822
+CI95_lower	1.374706
+CI95_upper	1.656021
+P_value	4.693684e-18

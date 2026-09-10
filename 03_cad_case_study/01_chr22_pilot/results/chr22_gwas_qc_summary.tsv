@@ -1,0 +1,10 @@
+Metric	Value
+Total_variants	272866
+Valid_ACGT_biallelic_SNPs	253295
+Valid_beta_SE_P	272866
+Valid_EAF	272865
+MAF_ge_0.01	153714
+MAF_ge_0.05	100049
+Duplicate_markername	0
+Duplicate_position	495
+Beta_logOR_match_1e-6	272866

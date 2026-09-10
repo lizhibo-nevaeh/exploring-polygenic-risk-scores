@@ -1,0 +1,7 @@
+library(data.table)
+root <- Sys.getenv("GWPRS_ROOT")
+metas <- file.path(root,"data/harmonized",sprintf("CAD_chr%d_meta.tsv",1:22)); stopifnot(all(file.exists(metas)))
+x <- rbindlist(lapply(metas,fread),idcol="CHR_INDEX"); neff <- as.integer(round(median(x$N_eff,na.rm=TRUE)))
+writeLines(as.character(neff),file.path(root,"results/global_neff.txt"))
+qcs <- rbindlist(lapply(file.path(root,"results/qc",sprintf("harmonize_chr%d.tsv",1:22)),fread)); fwrite(qcs,file.path(root,"results/qc/harmonization_summary.tsv"),sep="\t")
+cat("Genome-wide retained SNPs:",nrow(x),"\nGlobal median effective N:",neff,"\n")

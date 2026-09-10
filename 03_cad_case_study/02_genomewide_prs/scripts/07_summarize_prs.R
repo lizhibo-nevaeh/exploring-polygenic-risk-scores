@@ -1,0 +1,10 @@
+library(data.table)
+root<-Sys.getenv("GWPRS_ROOT"); pop_file<-Sys.getenv("POP_PSAM")
+scores<-lapply(1:22,function(chr){x<-fread(file.path(root,"results/scores",sprintf("CAD_chr%d.sscore",chr))); setnames(x,1,"FID"); x[,.(IID,score=get("SCORE1_SUM"))][,CHR:=chr]})
+wide<-dcast(rbindlist(scores),IID~CHR,value.var="score"); chrcols<-setdiff(names(wide),"IID"); wide[,PRS:=rowSums(.SD),.SDcols=chrcols]; wide[,PRS_Z:=as.numeric(scale(PRS))]; wide[,PRS_PERCENTILE:=frank(PRS,ties.method="average")/.N*100]
+pop<-fread(pop_file); setnames(pop,1,"IID"); keep<-intersect(c("IID","SuperPop","Population"),names(pop)); out<-merge(wide,pop[,..keep],by="IID",all.x=TRUE); setorder(out,-PRS)
+dir.create(file.path(root,"results/final"),recursive=TRUE,showWarnings=FALSE); fwrite(out,file.path(root,"results/final/CAD_genomewide_1000G_EUR_PRS.tsv"),sep="\t")
+psum<-out[,.(N=.N,Mean_PRS=mean(PRS),SD_PRS=sd(PRS),Mean_Z=mean(PRS_Z),Median_Z=median(PRS_Z)),by=Population]; fwrite(psum,file.path(root,"results/final/CAD_genomewide_population_summary.tsv"),sep="\t")
+png(file.path(root,"results/final/CAD_genomewide_PRS_distribution.png"),1400,1000,res=160); hist(out$PRS_Z,breaks=25,freq=FALSE,xlab="Standardized genome-wide CAD PRS (Z-score)",main="Genome-wide CAD PRS | 1000 Genomes EUR"); lines(density(out$PRS_Z),lwd=2); abline(v=0,lty=2); dev.off()
+out[,Population:=factor(Population,levels=c("CEU","FIN","GBR","IBS","TSI"))]; png(file.path(root,"results/final/CAD_genomewide_PRS_by_population.png"),1400,1000,res=160); boxplot(PRS_Z~Population,data=out,xlab="1000G EUR population",ylab="CAD PRS Z-score",main="Genome-wide CAD PRS by population"); abline(h=0,lty=2); dev.off()
+cat("N:",nrow(out),"\nPRS mean:",mean(out$PRS),"SD:",sd(out$PRS),"\nZ range:",range(out$PRS_Z),"\n"); print(psum); cat("\nHighest 10:\n"); print(out[1:10,.(IID,Population,PRS,PRS_Z,PRS_PERCENTILE)]); cat("\nLowest 10:\n"); print(out[(.N-9):.N,.(IID,Population,PRS,PRS_Z,PRS_PERCENTILE)])
